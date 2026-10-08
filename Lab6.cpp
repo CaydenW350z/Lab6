@@ -1,0 +1,233 @@
+#include <array>
+#include <iomanip>
+#include <iostream>
+#include <limits>
+#include <string>
+#include <vector>
+
+struct OrderItem {
+    char code;
+    int quantity;
+    double unitPrice;
+    double total;
+    std::string name;
+};
+
+struct ItemSummary {
+    std::string name;
+    int quantity = 0;
+    double sales = 0.0;
+};
+
+int getItemIndex(char code) {
+    switch (code) {
+    case 'W': return 0;
+    case 'L': return 1;
+    case 'S': return 2;
+    case 'D': return 3;
+    default: return -1;
+    }
+}
+
+double getItemPrice(char code, const std::string& size) {
+    if (code == 'W') {
+        if (size == "S") return 0.25;
+        if (size == "M") return 0.50;
+        if (size == "L") return 0.99;
+        if (size == "XXL") return 1.49;
+    }
+    else if (code == 'L') {
+        if (size == "S") return 9.99;
+        if (size == "M") return 14.99;
+        if (size == "L") return 19.99;
+        if (size == "XXL") return 29.99;
+    }
+    else if (code == 'S') {
+        if (size == "S") return 0.99;
+        if (size == "M") return 1.49;
+        if (size == "L") return 2.19;
+        if (size == "XXL") return 2.99;
+    }
+    else if (code == 'D') {
+        if (size == "S") return 1.19;
+        if (size == "M") return 1.89;
+        if (size == "L") return 2.49;
+        if (size == "XXL") return 3.15;
+    }
+    return 0.0;
+}
+
+int main() {
+    const std::array<std::string, 4> itemNames = {
+        "Water", "Lean", "Soda", "McDonald's Sprite"
+    };
+    std::array<ItemSummary, 4> itemSummaries = {{
+        {"Water"}, {"Lean"}, {"Soda"}, {"McDonald's Sprite"}
+    }};
+    std::string customerNameAccumulator;
+    int totalCustomers = 0;
+    char addAnotherCustomer = 'Y';
+
+    while (addAnotherCustomer == 'Y' || addAnotherCustomer == 'y') {
+        std::string customerName;
+        std::cout << "Enter customer name: ";
+        std::getline(std::cin >> std::ws, customerName);
+        customerNameAccumulator += customerName + "\n";
+        ++totalCustomers;
+
+        std::cout << "--------------------- Menu ---------------------\n";
+        std::cout << std::setw(12) << "Drinks" << std::setw(15) << "Small(S)" << std::setw(15)
+            << "Medium(M)" << std::setw(15) << "Large(L)" << std::setw(10) << "XXL\n";
+        std::cout << std::setw(12) << "Water (W)" << std::setw(15) << "$0.25" << std::setw(15)
+            << "$0.50" << std::setw(15) << "$0.99" << std::setw(10) << "$1.49\n";
+        std::cout << std::setw(12) << "Lean (L)" << std::setw(15) << "$9.99" << std::setw(15)
+            << "$14.99" << std::setw(15) << "$19.99" << std::setw(10) << "$29.99\n";
+        std::cout << std::setw(12) << "Soda (S)" << std::setw(15) << "$0.99" << std::setw(15)
+            << "$1.49" << std::setw(15) << "$2.19" << std::setw(10) << "$2.99\n";
+        std::cout << std::setw(12) << "Sprite (D)" << std::setw(15) << "$1.19" << std::setw(15)
+            << "$1.89" << std::setw(15) << "$2.49" << std::setw(10) << "$3.15\n\n";
+
+        char isMember = 'n';
+        std::cout << "Is the customer a member? (y for yes, n for no): ";
+        std::cin >> isMember;
+
+        std::vector<OrderItem> orderItems;
+        double totalPrice = 0.0;
+        char checkout = 'N';
+        while (checkout == 'N' || checkout == 'n') {
+            char itemCode;
+            std::string itemSize;
+            int itemQuantity;
+
+            std::cout << "Please make your selection using the item codes (W, L, S, D): ";
+            std::cin >> itemCode;
+            if (itemCode >= 'a' && itemCode <= 'z') {
+                itemCode = static_cast<char>(itemCode - 'a' + 'A');
+            }
+
+            std::cout << "Please choose your size (S, M, L, XXL): ";
+            std::cin >> itemSize;
+            for (char& character : itemSize) {
+                if (character >= 'a' && character <= 'z') {
+                    character = static_cast<char>(character - 'a' + 'A');
+                }
+            }
+
+            std::cout << "Enter the quantity of the item: ";
+            std::cin >> itemQuantity;
+
+            const int itemIndex = getItemIndex(itemCode);
+            const double itemPrice = getItemPrice(itemCode, itemSize);
+            if (itemIndex == -1 || itemPrice == 0.0 || itemQuantity <= 0) {
+                std::cout << "Invalid item, size, or quantity. Please enter a valid selection.\n";
+                continue;
+            }
+
+            const double itemTotal = itemQuantity * itemPrice;
+            totalPrice += itemTotal;
+            orderItems.push_back({itemCode, itemQuantity, itemPrice, itemTotal, itemNames[itemIndex]});
+
+            std::cout << "Would you like to checkout this customer's order? (Y or N): ";
+            std::cin >> checkout;
+        }
+
+        std::string note;
+        std::cout << "Enter Cashier Note: ";
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::getline(std::cin, note);
+
+        double discountedPrice = totalPrice;
+        double arkansasStateTax;
+        double faulknerCountyTax;
+        double conwayMunicipalTax;
+        if (isMember == 'y' || isMember == 'Y') {
+            discountedPrice = totalPrice * 0.90;
+        }
+        else {
+            discountedPrice = totalPrice;
+        }
+        const double salesDiscountMultiplier =
+            (isMember == 'y' || isMember == 'Y') ? 0.90 : 1.0;
+        for (const OrderItem& item : orderItems) {
+            const int itemIndex = getItemIndex(item.code);
+            itemSummaries[itemIndex].quantity += item.quantity;
+            itemSummaries[itemIndex].sales += item.total * salesDiscountMultiplier;
+        }
+        arkansasStateTax = discountedPrice * 0.065;
+        faulknerCountyTax = discountedPrice * 0.005;
+        conwayMunicipalTax = discountedPrice * 0.02125;
+        const double taxedTotal = discountedPrice + arkansasStateTax +
+            faulknerCountyTax + conwayMunicipalTax;
+
+        int tip;
+        double tipAmount = 0.0;
+        std::cout << "\nHow much would you like to tip?\n";
+        std::cout << "1. 10%, 2. 15% 3. 25% 4. Custom Amount\n";
+        std::cin >> tip;
+
+        switch (tip) {
+        case 1:
+            tipAmount = taxedTotal * 0.10;
+            break;
+        case 2:
+            tipAmount = taxedTotal * 0.15;
+            break;
+        case 3:
+            tipAmount = taxedTotal * 0.25;
+            break;
+        case 4:
+            std::cout << "Enter custom tip amount: $";
+            std::cin >> tipAmount;
+            break;
+        default:
+            std::cout << "Invalid number. No tip will be added.\n";
+            break;
+        }
+
+        std::cout << "\n-------------------- Store Receipt --------------------\n";
+        std::cout << "Customer: " << customerName << '\n';
+        std::cout << std::setw(24) << "Item" << std::setw(10) << "Qty"
+            << std::setw(15) << "Unit Price" << std::setw(15) << "Total" << '\n';
+        for (const OrderItem& item : orderItems) {
+            std::cout << std::setw(24) << item.name << std::setw(10) << item.quantity
+                << std::setw(14) << "$" << std::fixed << std::setprecision(2)
+                << item.unitPrice << std::setw(5) << "$" << item.total << '\n';
+        }
+
+        if (isMember == 'y' || isMember == 'Y') {
+            std::cout << "Member discount applied: 10%\n";
+            std::cout << "Discounted price: $" << discountedPrice << '\n';
+        }
+        std::cout << "State tax: $" << arkansasStateTax << '\n';
+        std::cout << "County tax: $" << faulknerCountyTax << '\n';
+        std::cout << "Conway City tax: $" << conwayMunicipalTax << '\n';
+        std::cout << "Total after taxes: $" << taxedTotal << '\n';
+        std::cout << "Tip: $" << tipAmount << '\n';
+        std::cout << "Total with tip: $" << taxedTotal + tipAmount << '\n';
+        std::cout << "Cashier Note: " << note << '\n';
+        std::cout << "--------------------- End of Receipt ---------------------\n";
+
+        std::cout << "\nAdd another customer? (Y or N): ";
+        std::cin >> addAnotherCustomer;
+    }
+
+    std::string itemCountAccumulator;
+    for (const ItemSummary& summary : itemSummaries) {
+        itemCountAccumulator += summary.name + ": " +
+            std::to_string(summary.quantity) + "\n";
+    }
+
+    std::cout << "\n-------------------- Sales Summary --------------------\n";
+    std::cout << "Customers (" << totalCustomers << "):\n" << customerNameAccumulator;
+    std::cout << "Total quantity sold by item:\n" << itemCountAccumulator;
+    std::cout << "Total sales by item:\n";
+    double totalSales = 0.0;
+    for (const ItemSummary& summary : itemSummaries) {
+        std::cout << summary.name << ": $" << std::fixed << std::setprecision(2)
+            << summary.sales << '\n';
+        totalSales += summary.sales;
+    }
+    std::cout << "Total sales: $" << std::fixed << std::setprecision(2) << totalSales << '\n';
+    std::cout << "-------------------------------------------------------\n";
+    return 0;
+}
