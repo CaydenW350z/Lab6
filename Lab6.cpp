@@ -61,9 +61,9 @@ int main() {
     const std::array<std::string, 4> itemNames = {
         "Water", "Lean", "Soda", "McDonald's Sprite"
     };
-    std::array<ItemSummary, 4> itemSummaries = {{
+    std::array<ItemSummary, 4> itemSummaries = { {
         {"Water"}, {"Lean"}, {"Soda"}, {"McDonald's Sprite"}
-    }};
+    } };
     std::string customerNameAccumulator;
     int totalCustomers = 0;
     char addAnotherCustomer = 'Y';
@@ -125,7 +125,7 @@ int main() {
 
             const double itemTotal = itemQuantity * itemPrice;
             totalPrice += itemTotal;
-            orderItems.push_back({itemCode, itemQuantity, itemPrice, itemTotal, itemNames[itemIndex]});
+            orderItems.push_back({ itemCode, itemQuantity, itemPrice, itemTotal, itemNames[itemIndex] });
 
             std::cout << "Would you like to checkout this customer's order? (Y or N): ";
             std::cin >> checkout;
@@ -198,12 +198,17 @@ int main() {
             std::cout << "Member discount applied: 10%\n";
             std::cout << "Discounted price: $" << discountedPrice << '\n';
         }
+        
         std::cout << "State tax: $" << arkansasStateTax << '\n';
         std::cout << "County tax: $" << faulknerCountyTax << '\n';
         std::cout << "Conway City tax: $" << conwayMunicipalTax << '\n';
         std::cout << "Total after taxes: $" << taxedTotal << '\n';
         std::cout << "Tip: $" << tipAmount << '\n';
-        std::cout << "Total with tip: $" << taxedTotal + tipAmount << '\n';
+        std::cout << "Total with tip: $" << taxedTotal + tipAmount << '\n'
+;
+        int loyaltyPoints = static_cast<int>(taxedTotal / 3);
+        std::string asterisks(loyaltyPoints, '*');
+        std::cout << "Loyalty Points : " << asterisks << '\n';
         std::cout << "Cashier Note: " << note << '\n';
         std::cout << "--------------------- End of Receipt ---------------------\n";
 
@@ -212,7 +217,8 @@ int main() {
     }
 
     std::string itemCountAccumulator;
-    for (const ItemSummary& summary : itemSummaries) {
+    
+for (const ItemSummary& summary : itemSummaries) {
         itemCountAccumulator += summary.name + ": " +
             std::to_string(summary.quantity) + "\n";
     }
