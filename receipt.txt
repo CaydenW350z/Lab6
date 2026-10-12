@@ -1,0 +1,39 @@
+
+-------------------- Store Receipt --------------------
+Customer: Cayden
+                    Item       Qty     Unit Price          Total
+                    Lean         3             $19.99    $59.97
+Member discount applied: 10%
+Discounted price: $53.97
+State tax: $3.51
+County tax: $0.27
+Conway City tax: $1.15
+Total after taxes: $58.90
+Tip: $8.83
+Total with tip: $67.73
+Loyalty Points : *******************
+Cashier Note: 
+--------------------- End of Receipt ---------------------
+
+-------------------- Sales Summary --------------------
+Customers (1):
+Cayden
+Total quantity sold by item:
+Water: 0
+Lean: 3
+Soda: 0
+McDonald's Sprite: 0
+Total sales by item:
+Total sales by item:
+Water: $0.00
+Lean: $53.97
+Soda: $0.00
+McDonald's Sprite: $0.00
+Total sales: $53.97
+Inventory:
+                    Item     Start    Change       End
+                   Water        50         0        50
+                    Lean        50        -3        47
+                    Soda        50         0        50
+       McDonald's Sprite        50         0        50
+-------------------------------------------------------
