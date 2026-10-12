@@ -4,6 +4,7 @@
 #include <limits>
 #include <string>
 #include <vector>
+#include <fstream>
 
 struct OrderItem {
     char code;
@@ -29,40 +30,57 @@ int getItemIndex(char code) {
     }
 }
 
-double getItemPrice(char code, const std::string& size) {
-    if (code == 'W') {
-        if (size == "S") return 0.25;
-        if (size == "M") return 0.50;
-        if (size == "L") return 0.99;
-        if (size == "XXL") return 1.49;
-    }
-    else if (code == 'L') {
-        if (size == "S") return 9.99;
-        if (size == "M") return 14.99;
-        if (size == "L") return 19.99;
-        if (size == "XXL") return 29.99;
-    }
-    else if (code == 'S') {
-        if (size == "S") return 0.99;
-        if (size == "M") return 1.49;
-        if (size == "L") return 2.19;
-        if (size == "XXL") return 2.99;
-    }
-    else if (code == 'D') {
-        if (size == "S") return 1.19;
-        if (size == "M") return 1.89;
-        if (size == "L") return 2.49;
-        if (size == "XXL") return 3.15;
-    }
-    return 0.0;
-}
-
 int main() {
+
+
+
+    std::ofstream receipt_fout;
+    receipt_fout.open("receipt.txt");
+
+    std::ifstream Lab6_fin;
+    Lab6_fin.open("Lab6.txt");
+
+    if (!Lab6_fin) {
+        std::cout << "Could not open Lab6.txt.\n";
+        return 1;
+    }
+
+    std::string waterName;
+    std::string leanName;
+    std::string sodaName;
+    std::string spriteName;
+    double waterSmallPrice;
+    double waterMediumPrice;
+    double waterLargePrice;
+    double waterXXLPrice;
+    double leanSmallPrice;
+    double leanMediumPrice;
+    double leanLargePrice;
+    double leanXXLPrice;
+    double sodaSmallPrice;
+    double sodaMediumPrice;
+    double sodaLargePrice;
+    double sodaXXLPrice;
+    double spriteSmallPrice;
+    double spriteMediumPrice;
+    double spriteLargePrice;
+    double spriteXXLPrice;
+
+    std::getline(Lab6_fin, waterName);
+    std::getline(Lab6_fin, leanName);
+    std::getline(Lab6_fin, sodaName);
+    std::getline(Lab6_fin, spriteName);
+
+    Lab6_fin >> waterSmallPrice >> waterMediumPrice >> waterLargePrice >> waterXXLPrice
+        >> leanSmallPrice >> leanMediumPrice >> leanLargePrice >> leanXXLPrice
+        >> sodaSmallPrice >> sodaMediumPrice >> sodaLargePrice >> sodaXXLPrice
+        >> spriteSmallPrice >> spriteMediumPrice >> spriteLargePrice >> spriteXXLPrice;
+
     const std::array<std::string, 4> itemNames = {
-        "Water", "Lean", "Soda", "McDonald's Sprite"
+        waterName, leanName, sodaName, spriteName
     };
     std::array<ItemSummary, 4> itemSummaries = { {
-        {"Water"}, {"Lean"}, {"Soda"}, {"McDonald's Sprite"}
+        {waterName}, {leanName}, {sodaName}, {spriteName}
     } };
     std::string customerNameAccumulator;
     int totalCustomers = 0;
@@ -78,14 +96,15 @@ int main() {
         std::cout << "--------------------- Menu ---------------------\n";
         std::cout << std::setw(12) << "Drinks" << std::setw(15) << "Small(S)" << std::setw(15)
             << "Medium(M)" << std::setw(15) << "Large(L)" << std::setw(10) << "XXL\n";
-        std::cout << std::setw(12) << "Water (W)" << std::setw(15) << "$0.25" << std::setw(15)
-            << "$0.50" << std::setw(15) << "$0.99" << std::setw(10) << "$1.49\n";
-        std::cout << std::setw(12) << "Lean (L)" << std::setw(15) << "$9.99" << std::setw(15)
-            << "$14.99" << std::setw(15) << "$19.99" << std::setw(10) << "$29.99\n";
-        std::cout << std::setw(12) << "Soda (S)" << std::setw(15) << "$0.99" << std::setw(15)
-            << "$1.49" << std::setw(15) << "$2.19" << std::setw(10) << "$2.99\n";
-        std::cout << std::setw(12) << "Sprite (D)" << std::setw(15) << "$1.19" << std::setw(15)
-            << "$1.89" << std::setw(15) << "$2.49" << std::setw(10) << "$3.15\n\n";
+        std::cout << std::fixed << std::setprecision(2);
+        std::cout << std::setw(12) << waterName + " (W)" << std::setw(10) << "$" << std::setw(5) << waterSmallPrice << std::setw(10) << "$" << std::setw(5)
+            << waterMediumPrice << std::setw(10) << "$" << std::setw(5) << waterLargePrice << std::setw(5) << "$" << std::setw(5) << waterXXLPrice << '\n';
+        std::cout << std::setw(12) << leanName + " (L)" << std::setw(10) << "$" << std::setw(5) << leanSmallPrice << std::setw(10) << "$" << std::setw(5)
+            << leanMediumPrice << std::setw(10) << "$" << std::setw(5) << leanLargePrice << std::setw(5) << "$" << std::setw(5) << leanXXLPrice << '\n';
+        std::cout << std::setw(12) << sodaName + " (S)" << std::setw(10) << "$" << std::setw(5) << sodaSmallPrice << std::setw(10) << "$" << std::setw(5)
+            << sodaMediumPrice << std::setw(10) << "$" << std::setw(5) << sodaLargePrice << std::setw(5) << "$" << std::setw(5) << sodaXXLPrice << '\n';
+        std::cout << std::setw(12) << "McSprite (D)" << std::setw(10) << "$" << std::setw(5) << spriteSmallPrice << std::setw(10) << "$" << std::setw(5)
+            << spriteMediumPrice << std::setw(10) << "$" << std::setw(5) << spriteLargePrice << std::setw(5) << "$" << std::setw(5) << spriteXXLPrice << "\n\n";
 
         char isMember = 'n';
         std::cout << "Is the customer a member? (y for yes, n for no): ";
@@ -117,7 +136,31 @@ int main() {
             std::cin >> itemQuantity;
 
             const int itemIndex = getItemIndex(itemCode);
-            const double itemPrice = getItemPrice(itemCode, itemSize);
+            double itemPrice = 0.0;
+            if (itemCode == 'W') {
+                if (itemSize == "S") itemPrice = waterSmallPrice;
+                else if (itemSize == "M") itemPrice = waterMediumPrice;
+                else if (itemSize == "L") itemPrice = waterLargePrice;
+                else if (itemSize == "XXL") itemPrice = waterXXLPrice;
+            }
+            else if (itemCode == 'L') {
+                if (itemSize == "S") itemPrice = leanSmallPrice;
+                else if (itemSize == "M") itemPrice = leanMediumPrice;
+                else if (itemSize == "L") itemPrice = leanLargePrice;
+                else if (itemSize == "XXL") itemPrice = leanXXLPrice;
+            }
+            else if (itemCode == 'S') {
+                if (itemSize == "S") itemPrice = sodaSmallPrice;
+                else if (itemSize == "M") itemPrice = sodaMediumPrice;
+                else if (itemSize == "L") itemPrice = sodaLargePrice;
+                else if (itemSize == "XXL") itemPrice = sodaXXLPrice;
+            }
+            else if (itemCode == 'D') {
+                if (itemSize == "S") itemPrice = spriteSmallPrice;
+                else if (itemSize == "M") itemPrice = spriteMediumPrice;
+                else if (itemSize == "L") itemPrice = spriteLargePrice;
+                else if (itemSize == "XXL") itemPrice = spriteXXLPrice;
+            }
             if (itemIndex == -1 || itemPrice == 0.0 || itemQuantity <= 0) {
                 std::cout << "Invalid item, size, or quantity. Please enter a valid selection.\n";
                 continue;
@@ -183,13 +226,31 @@ int main() {
             std::cout << "Invalid number. No tip will be added.\n";
             break;
         }
-
+         //real receipt
         std::cout << "\n-------------------- Store Receipt --------------------\n";
+
+
+        //file receipt
+        receipt_fout << "\n-------------------- Store Receipt --------------------\n";
+        
+
+       //real receipt
         std::cout << "Customer: " << customerName << '\n';
-        std::cout << std::setw(24) << "Item" << std::setw(10) << "Qty"
-            << std::setw(15) << "Unit Price" << std::setw(15) << "Total" << '\n';
-        for (const OrderItem& item : orderItems) {
+        //file receipt
+        receipt_fout << "Customer: " << customerName << '\n';
+
+          //real receipt
+          std::cout << std::setw(24) << "Item" << std::setw(10) << "Qty"
+              << std::setw(15) << "Unit Price" << std::setw(15) << "Total" << '\n';
+          receipt_fout << std::setw(24) << "Item" << std::setw(10) << "Qty"
+              << std::setw(15) << "Unit Price" << std::setw(15) << "Total" << '\n';
+
+          for (const OrderItem& item : orderItems) {
             std::cout << std::setw(24) << item.name << std::setw(10) << item.quantity
+                << std::setw(14) << "$" << std::fixed << std::setprecision(2)
+                << item.unitPrice << std::setw(5) << "$" << item.total << '\n';
+                //receipt file
+            receipt_fout << std::setw(24) << item.name << std::setw(10) << item.quantity
                 << std::setw(14) << "$" << std::fixed << std::setprecision(2)
                 << item.unitPrice << std::setw(5) << "$" << item.total << '\n';
         }
@@ -197,6 +258,10 @@ int main() {
         if (isMember == 'y' || isMember == 'Y') {
             std::cout << "Member discount applied: 10%\n";
             std::cout << "Discounted price: $" << discountedPrice << '\n';
+
+            //file receipt
+            receipt_fout << "Member discount applied: 10%\n";
+            receipt_fout << "Discounted price: $" << discountedPrice << '\n';
         }
         
         std::cout << "State tax: $" << arkansasStateTax << '\n';
@@ -204,13 +269,28 @@ int main() {
         std::cout << "Conway City tax: $" << conwayMunicipalTax << '\n';
         std::cout << "Total after taxes: $" << taxedTotal << '\n';
         std::cout << "Tip: $" << tipAmount << '\n';
-        std::cout << "Total with tip: $" << taxedTotal + tipAmount << '\n'
-;
+        std::cout << "Total with tip: $" << taxedTotal + tipAmount << '\n';
+        //receipt file
+        receipt_fout << "State tax: $" << arkansasStateTax << '\n';
+        receipt_fout << "County tax: $" << faulknerCountyTax << '\n';
+        receipt_fout << "Conway City tax: $" << conwayMunicipalTax << '\n';
+        receipt_fout << "Total after taxes: $" << taxedTotal << '\n';
+        receipt_fout << "Tip: $" << tipAmount << '\n';
+        receipt_fout << "Total with tip: $" << taxedTotal + tipAmount << '\n';
+        //real receipt
         int loyaltyPoints = static_cast<int>(taxedTotal / 3);
         std::string asterisks(loyaltyPoints, '*');
         std::cout << "Loyalty Points : " << asterisks << '\n';
         std::cout << "Cashier Note: " << note << '\n';
         std::cout << "--------------------- End of Receipt ---------------------\n";
+        //receipt file
+        receipt_fout << "Loyalty Points : " << asterisks << '\n';
+        receipt_fout << "Cashier Note: " << note << '\n';
+        receipt_fout << "--------------------- End of Receipt ---------------------\n";
+
+
+
+
 
         std::cout << "\nAdd another customer? (Y or N): ";
         std::cin >> addAnotherCustomer;
@@ -222,18 +302,55 @@ for (const ItemSummary& summary : itemSummaries) {
         itemCountAccumulator += summary.name + ": " +
             std::to_string(summary.quantity) + "\n";
     }
-
+//real receipt
     std::cout << "\n-------------------- Sales Summary --------------------\n";
     std::cout << "Customers (" << totalCustomers << "):\n" << customerNameAccumulator;
     std::cout << "Total quantity sold by item:\n" << itemCountAccumulator;
     std::cout << "Total sales by item:\n";
     double totalSales = 0.0;
+//receipt file
+    receipt_fout << "\n-------------------- Sales Summary --------------------\n";
+    receipt_fout << "Customers (" << totalCustomers << "):\n" << customerNameAccumulator;
+    receipt_fout << "Total quantity sold by item:\n" << itemCountAccumulator;
+    receipt_fout << "Total sales by item:\n";
+
+
     for (const ItemSummary& summary : itemSummaries) {
         std::cout << summary.name << ": $" << std::fixed << std::setprecision(2)
             << summary.sales << '\n';
         totalSales += summary.sales;
     }
     std::cout << "Total sales: $" << std::fixed << std::setprecision(2) << totalSales << '\n';
+    std::cout << "Inventory:\n";
+    std::cout << std::setw(24) << "Item" << std::setw(10) << "Start"
+        << std::setw(10) << "Change" << std::setw(10) << "End" << '\n';
+    std::cout << std::setw(24) << waterName << std::setw(10) << 50
+        << std::setw(10) << -itemSummaries[0].quantity << std::setw(10) << 50 - itemSummaries[0].quantity << '\n';
+    std::cout << std::setw(24) << leanName << std::setw(10) << 50
+        << std::setw(10) << -itemSummaries[1].quantity << std::setw(10) << 50 - itemSummaries[1].quantity << '\n';
+    std::cout << std::setw(24) << sodaName << std::setw(10) << 50
+        << std::setw(10) << -itemSummaries[2].quantity << std::setw(10) << 50 - itemSummaries[2].quantity << '\n';
+    std::cout << std::setw(24) << spriteName << std::setw(10) << 50
+        << std::setw(10) << -itemSummaries[3].quantity << std::setw(10) << 50 - itemSummaries[3].quantity << '\n';
     std::cout << "-------------------------------------------------------\n";
+//receipt file
+    receipt_fout << "Total sales by item:\n";
+    for (const ItemSummary& summary : itemSummaries) {
+        receipt_fout << summary.name << ": $" << std::fixed << std::setprecision(2)
+            << summary.sales << '\n';
+    }
+    receipt_fout << "Total sales: $" << std::fixed << std::setprecision(2) << totalSales << '\n';
+    receipt_fout << "Inventory:\n";
+    receipt_fout << std::setw(24) << "Item" << std::setw(10) << "Start"
+        << std::setw(10) << "Change" << std::setw(10) << "End" << '\n';
+    receipt_fout << std::setw(24) << waterName << std::setw(10) << 50
+        << std::setw(10) << -itemSummaries[0].quantity << std::setw(10) << 50 - itemSummaries[0].quantity << '\n';
+    receipt_fout << std::setw(24) << leanName << std::setw(10) << 50
+        << std::setw(10) << -itemSummaries[1].quantity << std::setw(10) << 50 - itemSummaries[1].quantity << '\n';
+    receipt_fout << std::setw(24) << sodaName << std::setw(10) << 50
+        << std::setw(10) << -itemSummaries[2].quantity << std::setw(10) << 50 - itemSummaries[2].quantity << '\n';
+    receipt_fout << std::setw(24) << spriteName << std::setw(10) << 50
+        << std::setw(10) << -itemSummaries[3].quantity << std::setw(10) << 50 - itemSummaries[3].quantity << '\n';
+    receipt_fout << "-------------------------------------------------------\n";
     return 0;
 }
